@@ -84,6 +84,32 @@ Number of processed conformations: {{ cf_size }}
 </tr>
     {% endfor %}
 </table>
+
+<h2>Rejected residues ({{ rejected|count }} residue(s))</h2>
+{% if rejected %}
+    <table class="redtable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Chain</th>
+        <th>Residue</th>
+        <th>Reason</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for row in rejected %}
+    <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+    </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    No residue was rejected from the computation.
+{% endif %}
+
 {% else %}
 There is no downloaded structure that meets the criteria.
 {% endif %}

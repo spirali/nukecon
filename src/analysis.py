@@ -18,11 +18,13 @@ class Analysis:
     def __init__(self, structures, component):
         self.structures = structures
         self.component = component
+        self.rejected = []
 
         self.direction_counts = [0] * len(DIRECTION_NAMES)
 
         # 2d Table len(direction_names) * len(gamma_names)
         self.data = [ [0] * len(GAMMA_NAMES) for n in DIRECTION_NAMES]
+
 
     def run(self):
         parser = PDB.PDBParser(PERMISSIVE=5)
@@ -36,7 +38,7 @@ class Analysis:
             for chain in model:
                 for residue in chain:
                     if residue.resname.lower() == self.component:
-                        self.process_residue(residue)
+                        self.process_residue(structure, chain, residue)
 
     def get_results(self):
         def percents(lst, s=None):
@@ -84,6 +86,7 @@ class Analysis:
                         "# of conformations",
                         DIRECTION_NAMES, self.direction_counts,
                         figsize=(8, 1))),
+                "rejected" : self.rejected,
                 "dir_names" : DIRECTION_NAMES,
                 "sugar_table" : zip(GAMMA_NAMES, table),
                 "sugar_chart" :
@@ -102,13 +105,16 @@ class Analysis:
 
         }
 
-    def process_residue(self, residue):
+    def process_residue(self, structure, chain, residue):
         if not all(name in residue for name in self.atom_names):
-            # TODO: How to handle this errors?
-            print("The structure", residue,
-                    "does not contain one of essential atoms:",
-                    " ".join(name for name in self.atom_names
-                                  if name not in residue))
+            missing_atoms = [ name for name in self.atom_names
+                                   if name not in residue ]
+            self.rejected.append((structure.id,
+                                  chain.id,
+                                  residue.id[0],
+                                  "Does not contain " + ",".join(
+                                      missing_atoms)))
+            logging.debug("Rejected %s", self.rejected[-1])
             return
         vectors = [ residue[name].get_vector() for name in self.atom_names ]
         vs = []
