@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Report for {{ component }}{% endblock %}
+
+{% block content %}
+{% if structures %}
+
+<h2>Results</h2>
+
+Number of processed conformations: {{ cf_size }}
+
+<h3>Distribution of conformations based on conformational analysis</h3>
+
+<ul>
+    {% for name, count, pc in cf_dirs %}
+    <li> {{ name }}: {{ count }} ({{ pc|round(2) }}%)</li>
+    {% endfor %}
+</ul>
+<img src="{{ cf_dirs_chart }}"/>
+
+<h3>Allover percentage of conformations of sugar ring and C4-C5</h3>
+
+<table>
+<thead>
+<tr>
+    <th></th>
+    {% for name in dir_names %}
+    <th>{{ name }}</th>
+    {% endfor %}
+</tr>
+</thead>
+<tbody>
+    {% for name, row in sugar_table %}
+<tr>
+    <td>{{ name }}</td>
+    {% for c in row %}
+    <td>{{ c }}</td>
+    {% endfor %}
+</tr>
+    {% endfor %}
+</table>
+
+<img src="{{ sugar_chart }}"/>
+
+<h3>Percentage within individual conformations</h3>
+
+<table>
+<thead>
+<tr>
+    <th></th>
+    {% for name in dir_names %}
+    <th>{{ name }}</th>
+    {% endfor %}
+</tr>
+</thead>
+<tbody>
+    {% for name, row in sugar_rel_table %}
+<tr>
+    <td>{{ name }}</td>
+    {% for c in row %}
+    <td>{{ c }}</td>
+    {% endfor %}
+</tr>
+    {% endfor %}
+</table>
+
+<img src="{{ sugar_rel_chart }}"/>
+
+<h2>List of processed structures ({{ structures.size }} structures)</h2>
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Resolution</th>
+    <th>Experimental technique</th>
+</tr>
+</thead>
+<tbody>
+    {% for s in structures %}
+<tr>
+    <td>{{ s.id }}</td>
+    <td>{% if s.resolution %}{{ s.resolution }}{% else %}<span class="no">N/A</span>{% endif %}</td>
+    <td>{{ s.exp_technique }}</td>
+</tr>
+    {% endfor %}
+</table>
+{% else %}
+There is no downloaded structure that meets the criteria.
+{% endif %}
+{% endblock %}
