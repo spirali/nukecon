@@ -11,6 +11,9 @@
     <li>Number of processed structures: {{ structures.size }} ({{ without_residue }} structures without {{ component }})
     <li>Number of found conformations: {{ total }}
 </ul>
+
+<img src="{{ polar_chart }}"/>
+
 <h3>Distribution of conformations based on conformational analysis</h3>
 
 <ul>
@@ -85,10 +88,6 @@
 </tr>
     {% endfor %}
 </table>
-
-
-
-
 
 <h2>List of processed structures ({{ structures.size }} structures)</h2>
 <table>
