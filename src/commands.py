@@ -4,6 +4,7 @@ from structure import StructureList
 import Bio.PDB as pdb
 from analysis import Analysis
 from results import process_results
+from nukecon import VERSION_STRING
 
 import time
 import paths
@@ -81,6 +82,7 @@ def run_summary(query):
             imgs=imgs,
             structures=structures.structures,
             component=query.component.upper(),
+            version_string=VERSION_STRING,
             date=datetime.datetime.now())
     with open("summary-{0}.html".format(query.component), "w") as f:
         f.write(report_html)
@@ -113,6 +115,7 @@ def run_analysis(query):
 
     template = get_template("report.html")
     report_html = template.render(
+            version_string=VERSION_STRING,
             structures=structures,
             component=query.component.upper(),
             date=datetime.datetime.now(),

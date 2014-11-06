@@ -1,3 +1,5 @@
+VERSION_STRING = "Nukecon 0.1"
+
 import logging
 import argparse
 import commands

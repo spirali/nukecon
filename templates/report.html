@@ -63,7 +63,7 @@
 <tr>
     <td>{{ name }}</td>
     {% for c in row %}
-    <td>{{ c }}</td>
+    <td>{{ c|round(2) }}%</td>
     {% endfor %}
 </tr>
     {% endfor %}
@@ -85,25 +85,6 @@
 <tr>
     <td>{{ structure.id }}</td>
     <td>{{ values|count }}</td>
-</tr>
-    {% endfor %}
-</table>
-
-<h2>List of processed structures ({{ structures.size }} structures)</h2>
-<table>
-<thead>
-<tr>
-    <th>ID</th>
-    <th>Resolution</th>
-    <th>Experimental technique</th>
-</tr>
-</thead>
-<tbody>
-    {% for s in structures %}
-<tr>
-    <td>{{ s.id }}</td>
-    <td>{% if s.resolution %}{{ s.resolution }}{% else %}<span class="no">N/A</span>{% endif %}</td>
-    <td>{{ s.exp_technique }}</td>
 </tr>
     {% endfor %}
 </table>
