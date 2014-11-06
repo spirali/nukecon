@@ -7,16 +7,18 @@
 
 <h2>Results</h2>
 
-Number of processed conformations: {{ cf_size }}
-
+<ul>
+    <li>Number of processed structures: {{ structures.size }} ({{ without_residue }} structures without {{ component }})
+    <li>Number of found conformations: {{ total }}
+</ul>
 <h3>Distribution of conformations based on conformational analysis</h3>
 
 <ul>
-    {% for name, count, pc in cf_dirs %}
+    {% for name, count, pc in dir_counts %}
     <li> {{ name }}: {{ count }} ({{ pc|round(2) }}%)</li>
     {% endfor %}
 </ul>
-<img src="{{ cf_dirs_chart }}"/>
+<img src="{{ dir_counts_img }}"/>
 
 <h3>Allover percentage of conformations of sugar ring and C4-C5</h3>
 
@@ -34,7 +36,7 @@ Number of processed conformations: {{ cf_size }}
 <tr>
     <td>{{ name }}</td>
     {% for c in row %}
-    <td>{{ c }}</td>
+    <td>{{ c|round(2) }}%</td>
     {% endfor %}
 </tr>
     {% endfor %}
@@ -66,6 +68,28 @@ Number of processed conformations: {{ cf_size }}
 
 <img src="{{ sugar_rel_chart }}"/>
 
+<h3>Results by structures</h3>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>{{ component }} residues</th>
+</tr>
+</thead>
+<tbody>
+    {% for structure, values in results_by_structures %}
+<tr>
+    <td>{{ structure.id }}</td>
+    <td>{{ values|count }}</td>
+</tr>
+    {% endfor %}
+</table>
+
+
+
+
+
 <h2>List of processed structures ({{ structures.size }} structures)</h2>
 <table>
 <thead>
@@ -85,8 +109,9 @@ Number of processed conformations: {{ cf_size }}
     {% endfor %}
 </table>
 
-<h2>Rejected residues ({{ rejected|count }} residue(s))</h2>
+<h2>Rejected residues</h2>
 {% if rejected %}
+{{ rejected|count }} structures were rejected because of the following reasons:
     <table class="redtable">
     <thead>
     <tr>

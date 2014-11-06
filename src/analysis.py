@@ -1,14 +1,10 @@
 
+from results import Result
+
 import Bio.PDB as PDB
 import math
 import chart
 import logging
-
-GAMMA_LIMITS = [ 30,   90,    150,   210,  270,   330, 9999 ]
-GAMMA_NAMES = [ "sp", "+sc", "+ac", "ap", "-ac", "-sc", "sp" ]
-
-DIRECTION_LIMITS = [ 45, 135, 225, 315 ]
-DIRECTION_NAMES = [ "North", "East", "South", "West" ]
 
 
 class Analysis:
@@ -19,11 +15,14 @@ class Analysis:
         self.structures = structures
         self.component = component
         self.rejected = []
+        self.results = []
 
+        """
         self.direction_counts = [0] * len(DIRECTION_NAMES)
 
         # 2d Table len(direction_names) * len(gamma_names)
         self.data = [ [0] * len(GAMMA_NAMES) for n in DIRECTION_NAMES]
+        """
 
 
     def run(self):
@@ -39,71 +38,6 @@ class Analysis:
                 for residue in chain:
                     if residue.resname.lower() == self.component:
                         self.process_residue(structure, chain, residue)
-
-    def get_results(self):
-        def percents(lst, s=None):
-            if s is None:
-                s = sum(lst)
-            if s == 0:
-                return [ 0.0 ] * len(lst)
-            return [ i * 100 / s for i in lst ]
-
-        sums = [ sum(row) for row in self.data ]
-        total = sum(sums)
-
-        names = [ "{0} {1}".format(d, g)
-                  for d in DIRECTION_NAMES
-                  for g in GAMMA_NAMES ]
-
-        values = [ self.data[i][j]
-                      for i in range(len(DIRECTION_NAMES))
-                      for j in range(len(GAMMA_NAMES)) ]
-
-        table = [ [ "{0} ({1:.2f}%) ".format(self.data[i][j],
-                                          self.data[i][j] * 100 / total
-                                          if total > 0 else 0.0)
-                   for i in range(len(DIRECTION_NAMES)) ]
-                   for j in range(len(GAMMA_NAMES)) ]
-
-        values_rel = [ self.data[i][j] / sums[i] if sums[i] > 0 else 0.0
-                      for i in range(len(DIRECTION_NAMES))
-                      for j in range(len(GAMMA_NAMES)) ]
-
-        table_rel = [ [ "{0} ({1:.2f}%) ".format(self.data[i][j],
-                                             self.data[i][j] * 100 / sums[i]
-                                             if sums[i] > 0 else 0.0)
-                   for i in range(len(DIRECTION_NAMES)) ]
-                   for j in range(len(GAMMA_NAMES)) ]
-
-        return {
-                "cf_size" : total,
-                "cf_dirs" : zip(DIRECTION_NAMES,
-                                self.direction_counts,
-                                percents(self.direction_counts)),
-                "cf_dirs_chart" :
-                    chart.make_web_png(chart.make_barplot(
-                        "Distribution of conformations",
-                        "# of conformations",
-                        DIRECTION_NAMES, self.direction_counts,
-                        figsize=(8, 1))),
-                "rejected" : self.rejected,
-                "dir_names" : DIRECTION_NAMES,
-                "sugar_table" : zip(GAMMA_NAMES, table),
-                "sugar_chart" :
-                    chart.make_web_png(chart.make_barplot(
-                        "Conformations of sugar ring and C4-C5",
-                        "# of conformations",
-                        names, values,
-                        figsize=(8, 6))),
-                "sugar_rel_table" : zip(GAMMA_NAMES, table_rel),
-                "sugar_rel_chart" :
-                    chart.make_web_png(chart.make_barplot(
-                        "Percentage within individual conformations",
-                        "% within individual conformations",
-                        names, values_rel,
-                        figsize=(8, 6))),
-
-        }
 
     def process_residue(self, structure, chain, residue):
         if not all(name in residue for name in self.atom_names):
@@ -146,6 +80,12 @@ class Analysis:
         logging.debug('\nPhase angle of pseudorotation P = {0:.2f}°'.format(p))
         logging.debug('Maximum degree of pucker tm = {0:.2f}°'.format(tm))
 
+        result = Result(structure)
+        result.gamma = gamma
+        result.p = p
+        self.results.append(result)
+
+        """
         for i, limit in enumerate(GAMMA_LIMITS):
             if gamma < limit:
                 gamma_id = i
@@ -162,3 +102,4 @@ class Analysis:
 
         self.direction_counts[direction_id] += 1
         self.data[direction_id][gamma_id] += 1
+        """

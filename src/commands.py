@@ -3,6 +3,7 @@ import chart
 from structure import StructureList
 import Bio.PDB as pdb
 from analysis import Analysis
+from results import process_results
 
 import time
 import paths
@@ -115,7 +116,7 @@ def run_analysis(query):
             structures=structures,
             component=query.component.upper(),
             date=datetime.datetime.now(),
-            **analysis.get_results())
+            **process_results(analysis))
     with open("report-{0}.html".format(query.component), "w") as f:
         f.write(report_html)
     logging.info("Report of analysis was written as 'report-%s.html'",
