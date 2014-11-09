@@ -16,18 +16,9 @@ class Analysis:
         self.rejected = []
         self.results = []
 
-        """
-        self.direction_counts = [0] * len(DIRECTION_NAMES)
-
-        # 2d Table len(direction_names) * len(gamma_names)
-        self.data = [ [0] * len(GAMMA_NAMES) for n in DIRECTION_NAMES]
-        """
-
-
     def run(self):
         parser = PDB.PDBParser(PERMISSIVE=5)
         for structure in self.structures:
-            #filename = os.path.join(self.ligand_type, "pdb{}.ent".format(ligand))
             structure = parser.get_structure(structure.id, structure.filename)
             self.process_structure(structure)
 

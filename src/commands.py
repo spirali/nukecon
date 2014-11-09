@@ -63,7 +63,7 @@ def run_summary(query):
     structures = load_summary(query).filter_by_query(query)
     structures.fill_download_info()
     resolution_stats = structures.make_resolution_stats()
-    downloaded_size = structures.filter_downloaded().size
+    downloaded_size = len(structures.filter_downloaded())
     imgs = []
 
     fig = chart.make_barplot("Resolution of structures", "# structures",
@@ -72,7 +72,7 @@ def run_summary(query):
 
     fig = chart.make_pie("",
             [ "Downloaded", "Not downloaded"] ,
-            [ downloaded_size, structures.size - downloaded_size],
+            [ downloaded_size, len(structures) - downloaded_size],
             colors=("green", "gray"))
     imgs.append(chart.make_web_png(fig))
 
@@ -87,7 +87,7 @@ def run_summary(query):
     with open("summary-{0}.html".format(query.component), "w") as f:
         f.write(report_html)
     logging.info("Summary of %s structures written as 'summary-%s.html'",
-            structures.size,
+            len(structures),
             query.component)
 
 def run_download(query):
@@ -96,7 +96,7 @@ def run_download(query):
     structures = structures.filter_not_downloaded()
 
     pdb_list = pdb.PDBList()
-    logging.info("Downloading %s structures ...", structures.size)
+    logging.info("Downloading %s structures ...", len(structures))
 
     for i, id in enumerate(structures.get_ids()):
         path = os.path.join(paths.DATA, id[:2].lower())

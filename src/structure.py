@@ -74,9 +74,6 @@ class StructureList:
                 return
             for e in tree.getroot():
                 self.structures.append(Structure.from_element(e))
-    @property
-    def size(self):
-        return len(self.structures)
 
     def save_summary(self, filename):
         root = xml.Element("structures")
@@ -133,3 +130,6 @@ class StructureList:
 
     def __iter__(self):
         return iter(self.structures)
+
+    def __len__(self):
+        return len(self.structures)

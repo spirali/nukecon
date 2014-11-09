@@ -8,7 +8,7 @@
 <h2>Results</h2>
 
 <ul>
-    <li>Number of processed structures: {{ structures.size }} ({{ without_residue }} structures without {{ component }})
+    <li>Number of processed structures: {{ structures|count }} ({{ without_residue }} structures without {{ component }})
     <li>Number of found conformations: {{ total }}
 </ul>
 
