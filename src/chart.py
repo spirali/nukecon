@@ -78,8 +78,9 @@ def make_polar_chart(title, radial_values, axial_values, radial_label, axial_lab
     x_name = 1.4 * r_radlab[i] * np.sin(phiRadLab)
     y_name = 1.3 * r_radlab[i] * np.cos(phiRadLab)
     plt.text(x_name, y_name, axial_label, fontsize=fontsize0 + 3)
-    x_data = axial_values * np.sin(radial_values)
-    y_data = axial_values * np.cos(radial_values)
+    radial_values_rad = [ a * np.pi / 180.0 for a in radial_values ]
+    x_data = axial_values * np.sin(radial_values_rad)
+    y_data = axial_values * np.cos(radial_values_rad)
     plt.plot(x_data, y_data, 'r.', markersize=5, color="green")
     plt.axis('equal')
     plt.axis('off')
