@@ -35,7 +35,6 @@ class Analysis:
                                    if name not in residue ]
             self.rejected.append((pdb_structure.id,
                                   pdb_chain.id,
-                                  residue.id[0],
                                   "Does not contain " + ",".join(
                                       missing_atoms)))
             logging.debug("Rejected %s", self.rejected[-1])
