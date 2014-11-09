@@ -3,7 +3,6 @@ from results import Result
 
 import Bio.PDB as PDB
 import math
-import chart
 import logging
 
 
@@ -83,23 +82,5 @@ class Analysis:
         result = Result(structure)
         result.gamma = gamma
         result.p = p
+        result.tm = tm
         self.results.append(result)
-
-        """
-        for i, limit in enumerate(GAMMA_LIMITS):
-            if gamma < limit:
-                gamma_id = i
-                break
-        else:
-            raise Exception("Internal error")
-
-        for i, limit in enumerate(DIRECTION_LIMITS):
-            if p < limit:
-                direction_id = i
-                break
-        else:
-            direction_id = 0 # North
-
-        self.direction_counts[direction_id] += 1
-        self.data[direction_id][gamma_id] += 1
-        """

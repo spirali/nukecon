@@ -14,6 +14,7 @@ class Result:
         self.structure = structure
         self.gamma = None
         self.p = None
+        self.tm = None
 
     @property
     def dir_index(self):
@@ -93,7 +94,7 @@ def process_results(analysis):
     dir_counts_pc = list(map(pc_fn(sum(dir_counts)), dir_counts))
 
     gamma_values = [ r.gamma for r in results ]
-    p_values = [ r.p for r in results ]
+    tm_values = [ r.tm for r in results ]
 
     data = [ [ len([ r for r in results
                      if r.dir_index == j and r.gamma_index == i ])
@@ -141,7 +142,7 @@ def process_results(analysis):
         "polar_chart" :
             chart.make_web_png(chart.make_polar_chart(
                 "??? Title",
-                gamma_values, p_values)),
+                gamma_values, tm_values, "$\\nu$", "tm")),
         "sugar_table" : zip(GAMMA_NAMES, table),
         "sugar_chart" :
             chart.make_web_png(chart.make_barplot(
