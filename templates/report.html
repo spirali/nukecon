@@ -77,15 +77,27 @@
 <thead>
 <tr>
     <th>ID</th>
+    <th>Chain ID</th>
     <th>{{ component }} residues</th>
+    <th>EC numbers</th>
 </tr>
 </thead>
 <tbody>
-    {% for structure, values in results_by_structures %}
+    {% for structure, chains in results_by_chains %}
 <tr>
     <td>{{ structure.id }}</td>
-    <td>{{ values|count }}</td>
+    <td>{{ chains[0][0].id }}</td>
+    <td>{{ chains[0][1]|count }}</td>
+    <td>{{ chains[0][0].ec_numbers_str }}</td>
 </tr>
+    {% for chain, results in chains[1:] %}
+<tr>
+    <td></td>
+    <td>{{ chain.id }}</td>
+    <td>{{ results|count }}</td>
+    <td>{{ chain.ec_numbers_str }}</td>
+</tr>
+    {% endfor %}
     {% endfor %}
 </table>
 

@@ -1,5 +1,6 @@
 
-def group_by(lst, fn, sort_key=None, sort=False, only_values=False, base=None):
+def group_by(lst, fn, sort_key=None, sort=False,
+             only_values=False, base=None, as_dict=False):
     results = {}
     if base is not None:
         for key in base:
@@ -11,6 +12,8 @@ def group_by(lst, fn, sort_key=None, sort=False, only_values=False, base=None):
             values.append(item)
         else:
             results[key] = [ item ]
+    if as_dict:
+        return results
     results = list(results.items())
     if sort_key:
         results.sort(key=lambda item: sort_key(item[0]))

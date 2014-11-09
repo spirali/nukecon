@@ -11,8 +11,9 @@ DIRECTION_NAMES = [ "North", "East", "South", "West" ]
 
 class Result:
 
-    def __init__(self, structure):
+    def __init__(self, structure, chain):
         self.structure = structure
+        self.chain = chain
         self.gamma = None
         self.p = None
         self.tm = None
@@ -58,6 +59,12 @@ def process_results(analysis):
             lambda result: result.structure,
             sort_key=lambda structure: structure.id)
 
+    results_by_chains = []
+    for s, values in results_by_structures:
+        results_by_chains.append(
+            (s, utils.group_by(
+            values, lambda result: result.chain, sort_key=lambda chain: chain.id)))
+
     without_residue = len(analysis.structures) - \
                       len(results_by_structures)
 
@@ -102,7 +109,7 @@ def process_results(analysis):
 
     return {
         "total" : total,
-        "results_by_structures" : results_by_structures,
+        "results_by_chains" : results_by_chains,
         "rejected" : analysis.rejected,
         "without_residue" : without_residue,
         "dir_counts" : zip(DIRECTION_NAMES, dir_counts, dir_counts_pc),

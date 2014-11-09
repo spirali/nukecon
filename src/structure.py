@@ -4,6 +4,32 @@ import logging
 import os.path
 import paths
 
+class Chain:
+
+    def __init__(self, id):
+        self.id = id
+        self.ec_numbers = []
+
+    @property
+    def ec_numbers_str(self):
+        return ", ".join(self.ec_numbers)
+
+    def to_element(self):
+        e = xml.Element("chain")
+        e.set("id", self.id)
+        for ec_no in self.ec_numbers:
+            e2 = xml.Element("ec-number")
+            e2.text = str(ec_no)
+            e.append(e2)
+        return e
+
+    @classmethod
+    def from_element(cls, element):
+        chain = cls(element.get("id"))
+        chain.ec_numbers = [ e.text for e in element.findall("ec-number") ]
+        return chain
+
+
 class Structure:
 
     def __init__(self, id):
@@ -11,7 +37,7 @@ class Structure:
         self.downloaded = False
         self.resolution = None
         self.exp_technique = None
-        self.ecn = None
+        self.chains = []
 
     @property
     def filename(self):
@@ -19,14 +45,19 @@ class Structure:
                             self.id[:2].lower(),
                             "pdb{0}.ent".format(self.id.lower()))
 
-    def to_xml(self):
+    def get_chain(self, id):
+        for chain in self.chains:
+            if chain.id == id:
+                return chain
+
+    def to_element(self):
         e = xml.Element("structure")
         e.set("id", str(self.id))
         if self.resolution is not None:
             e.set("resolution", str(self.resolution))
         e.set("exp-technique", self.exp_technique)
-        if self.ecn is not None:
-            e.set("ecn", self.ecn)
+        for chain in self.chains:
+            e.append(chain.to_element())
         return e
 
     def fill_download_info(self):
@@ -34,13 +65,22 @@ class Structure:
 
     @classmethod
     def from_datarow(cls, row):
-        id, resolution, exp_technique = row
+        id, chains = row
+        id, chain_id, resolution, exp_technique, ec_no = chains[0]
         s = cls(id)
         try:
             s.resolution = float(resolution)
         except ValueError:
             s.resolution = None
         s.exp_technique = exp_technique
+
+        for c in chains:
+            id, chain_id, resolution, exp_technique, ec_no = c
+            chain = Chain(chain_id)
+            if ec_no:
+                chain.ec_numbers = ec_no.split("#")
+            s.chains.append(chain)
+
         return s
 
     @classmethod
@@ -50,7 +90,7 @@ class Structure:
         if resolution is not None:
             s.resolution = float(resolution)
         s.exp_technique = element.get("exp-technique")
-        s.ecn = element.get("ecn")
+        s.chains = [ Chain.from_element(e) for e in element.findall("chain") ]
         return s
 
 
@@ -79,7 +119,7 @@ class StructureList:
         root = xml.Element("structures")
 
         for s in self.structures:
-            root.append(s.to_xml())
+            root.append(s.to_element())
 
         tree = xml.ElementTree(root)
         tree.write(filename)

@@ -12,6 +12,7 @@ import logging
 import jinja2
 import datetime
 import os
+import utils
 
 def ensure_data_dir():
     paths.makedir_if_not_exists(paths.DATA)
@@ -44,10 +45,13 @@ def run_update(query):
     logging.info("%s structures found. Downloading report ...", len(pdb_ids))
     report_data = pdbquery.get_report(pdb_ids,
                                       ("structureId",
+                                       "chainId",
                                        "resolution",
-                                       "experimentalTechnique"))
-    new_structures = StructureList(datarows=report_data)
-
+                                       "experimentalTechnique",
+                                       "ecNo"))
+    report_rows = utils.group_by(
+            report_data, lambda row: row[0], sort=True)
+    new_structures = StructureList(datarows=report_rows)
     new, removed = new_structures.compare(old_structures)
     if new > 0:
         logging.info("There is %s new structures", new)

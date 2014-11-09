@@ -19,22 +19,22 @@ class Analysis:
     def run(self):
         parser = PDB.PDBParser(PERMISSIVE=5)
         for structure in self.structures:
-            structure = parser.get_structure(structure.id, structure.filename)
-            self.process_structure(structure)
+            pdb_structure = parser.get_structure(structure.id, structure.filename)
+            self.process_structure(structure, pdb_structure)
 
-    def process_structure(self, structure):
-        for model in structure:
-            for chain in model:
-                for residue in chain:
+    def process_structure(self, structure, pdb_structure):
+        for pdb_model in pdb_structure:
+            for pdb_chain in pdb_model:
+                for residue in pdb_chain:
                     if residue.resname.lower() == self.component:
-                        self.process_residue(structure, chain, residue)
+                        self.process_residue(structure, pdb_structure, pdb_chain, residue)
 
-    def process_residue(self, structure, chain, residue):
+    def process_residue(self, structure, pdb_structure, pdb_chain, residue):
         if not all(name in residue for name in self.atom_names):
             missing_atoms = [ name for name in self.atom_names
                                    if name not in residue ]
-            self.rejected.append((structure.id,
-                                  chain.id,
+            self.rejected.append((pdb_structure.id,
+                                  pdb_chain.id,
                                   residue.id[0],
                                   "Does not contain " + ",".join(
                                       missing_atoms)))
@@ -70,7 +70,7 @@ class Analysis:
         logging.debug('\nPhase angle of pseudorotation P = {0:.2f}°'.format(p))
         logging.debug('Maximum degree of pucker tm = {0:.2f}°'.format(tm))
 
-        result = Result(structure)
+        result = Result(structure, structure.get_chain(pdb_chain.id))
         result.gamma = gamma
         result.p = p
         result.tm = tm
