@@ -105,8 +105,6 @@ def process_results(analysis):
               for j in range(len(DIRECTION_NAMES))
               for i in range(len(GAMMA_NAMES)) ]
 
-
-
     return {
         "total" : total,
         "results_by_chains" : results_by_chains,

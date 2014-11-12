@@ -80,29 +80,41 @@
     <th>Structure Title</th>
     <th>Chain ID</th>
     <th>Macromolecule Name</th>
-    <th>{{ component }} residues</th>
     <th>EC Numbers</th>
+    <th>Gamma</th>
+    <th>P</th>
+    <th>tm</th>
 </tr>
 </thead>
 <tbody>
     {% for structure, chains in results_by_chains %}
-<tr>
-    <td>{{ structure.id }}</td>
-    <td title="{{ structure.title }}">{{ structure.title|truncate(40) }}</td>
-    <td>{{ chains[0][0].id }}</td>
-    <td title="{{ chains[0][0].compound }}">{{ chains[0][0].compound|truncate(40) }}</td>
-    <td>{{ chains[0][1]|count }}</td>
-    <td>{{ chains[0][0].ec_numbers_str }}</td>
-</tr>
-    {% for chain, results in chains[1:] %}
-<tr>
-    <td></td>
-    <td></td>
-    <td>{{ chain.id }}</td>
-    <td title="{{ chain.compound }}">{{ chain.compound|truncate(40) }}</td>
-    <td>{{ results|count }}</td>
-    <td>{{ chain.ec_numbers_str }}</td>
-</tr>
+    {% set structure_loop = loop %}
+    {% for chain, results in chains %}
+    {% set chain_loop = loop %}
+    {% for result in results %}
+    <tr class="{{ structure_loop.cycle("odd", "even") }}" >
+    {% if chain_loop.index == 1 and loop.index == 1 %}
+        <td>{{ structure.id }}</td>
+        <td title="{{ structure.title }}">{{ structure.title|truncate(40) }}</td>
+    {% else %}
+        <td class="empty"></td>
+        <td class="empty"></td>
+    {% endif %}
+    {% if loop.index == 1 %}
+        <td>{{ chain.id }}</td>
+        <td title="{{ chain.compound }}">{{ chain.compound|truncate(40) }}</td>
+        <td>{{ chain.ec_numbers_str }}</td>
+    {% else %}
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+    {% endif %}
+
+    <td>{{ result.gamma|round(2) }}&#176;</td>
+    <td>{{ result.p|round(2) }}&#176;</td>
+    <td>{{ result.tm|round(2) }}&#176;</td>
+    </tr>
+    {% endfor %}
     {% endfor %}
     {% endfor %}
 </table>
