@@ -9,6 +9,7 @@ class Chain:
     def __init__(self, id):
         self.id = id
         self.ec_numbers = []
+        self.compound = None
 
     @property
     def ec_numbers_str(self):
@@ -17,6 +18,7 @@ class Chain:
     def to_element(self):
         e = xml.Element("chain")
         e.set("id", self.id)
+        e.set("compound", self.compound)
         for ec_no in self.ec_numbers:
             e2 = xml.Element("ec-number")
             e2.text = str(ec_no)
@@ -27,6 +29,7 @@ class Chain:
     def from_element(cls, element):
         chain = cls(element.get("id"))
         chain.ec_numbers = [ e.text for e in element.findall("ec-number") ]
+        chain.compound = element.get("compound")
         return chain
 
 
@@ -37,6 +40,7 @@ class Structure:
         self.downloaded = False
         self.resolution = None
         self.exp_technique = None
+        self.title = None
         self.chains = []
 
     @property
@@ -56,6 +60,7 @@ class Structure:
         if self.resolution is not None:
             e.set("resolution", str(self.resolution))
         e.set("exp-technique", self.exp_technique)
+        e.set("title", self.title)
         for chain in self.chains:
             e.append(chain.to_element())
         return e
@@ -66,17 +71,21 @@ class Structure:
     @classmethod
     def from_datarow(cls, row):
         id, chains = row
-        id, chain_id, resolution, exp_technique, ec_no = chains[0]
+        id, chain_id, title, compound, resolution, exp_technique, ec_no \
+            = chains[0]
         s = cls(id)
         try:
             s.resolution = float(resolution)
         except ValueError:
             s.resolution = None
         s.exp_technique = exp_technique
+        s.title = title
 
         for c in chains:
-            id, chain_id, resolution, exp_technique, ec_no = c
+            id, chain_id, t, c, resolution, exp_technique, ec_no = c
+            assert t == title
             chain = Chain(chain_id)
+            chain.compound = c
             if ec_no:
                 chain.ec_numbers = ec_no.split("#")
             s.chains.append(chain)
@@ -90,6 +99,7 @@ class Structure:
         if resolution is not None:
             s.resolution = float(resolution)
         s.exp_technique = element.get("exp-technique")
+        s.title = element.get("title", None)
         s.chains = [ Chain.from_element(e) for e in element.findall("chain") ]
         return s
 

@@ -24,6 +24,7 @@
     <th>Downloaded</th>
     <th>Resolution</th>
     <th>Experimental technique</th>
+    <th>Structure title</th>
 </tr>
 </thead>
 <tbody>
@@ -33,6 +34,7 @@
     <td>{% if s.downloaded %}<span class="yes">Yes</span>{% else %}<span class="no">No</span>{% endif %}</td>
     <td>{% if s.resolution %}{{ s.resolution }}{% else %}<span class="no">N/A</span>{% endif %}</td>
     <td>{{ s.exp_technique }}</td>
+    <td>{{ s.title }}</td>
 </tr>
     {% endfor %}
 </table>

@@ -46,6 +46,8 @@ def run_update(query):
     report_data = pdbquery.get_report(pdb_ids,
                                       ("structureId",
                                        "chainId",
+                                       "structureTitle",
+                                       "compound",
                                        "resolution",
                                        "experimentalTechnique",
                                        "ecNo"))
