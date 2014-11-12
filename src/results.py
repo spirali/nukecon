@@ -121,7 +121,7 @@ def process_results(analysis):
         "polar_chart" :
             chart.make_web_png(chart.make_polar_chart(
                 "??? Title",
-                p_values, tm_values, "p", "tm")),
+                p_values, tm_values, "P", "$\\nu_{max}$")),
         "sugar_table" : zip(GAMMA_NAMES, table),
         "sugar_chart" :
             chart.make_web_png(chart.make_barplot(
