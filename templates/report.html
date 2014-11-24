@@ -83,7 +83,9 @@
     <th>EC Numbers</th>
     <th>Gamma</th>
     <th>P</th>
-    <th>tm</th>
+    <th>Gamma (degree)</th>
+    <th>P (degree)</th>
+    <th>tm (degree)</th>
 </tr>
 </thead>
 <tbody>
@@ -109,7 +111,8 @@
         <td class="empty"></td>
         <td class="empty"></td>
     {% endif %}
-
+    <td>{{ result.dir_name }}</td>
+    <td>{{ result.gamma_name }}</td>
     <td>{{ result.gamma|round(2) }}&#176;</td>
     <td>{{ result.p|round(2) }}&#176;</td>
     <td>{{ result.tm|round(2) }}&#176;</td>
