@@ -6,7 +6,7 @@ import numpy as np
 
 def make_barplot(title, xtitle, names, values, figsize=(8, 2)):
     fig = plt.figure(figsize=figsize)
-    plt.barh(range(len(names)), values, align='center', color="green")
+    plt.barh(range(len(names)), values, align='center', color="#70C42F")
     plt.yticks(range(len(names)), names)
     plt.xlabel(xtitle)
     plt.ylim(-1, len(names))
@@ -81,7 +81,7 @@ def make_polar_chart(title, radial_values, axial_values, radial_label, axial_lab
     radial_values_rad = [ a * np.pi / 180.0 for a in radial_values ]
     x_data = axial_values * np.sin(radial_values_rad)
     y_data = axial_values * np.cos(radial_values_rad)
-    plt.plot(x_data, y_data, 'r.', markersize=5, color="green")
+    plt.plot(x_data, y_data, 'r.', markersize=5, color="#70C42F")
     plt.axis('equal')
     plt.axis('off')
     return fig

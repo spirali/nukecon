@@ -3,7 +3,6 @@ VERSION_STRING = "Nukecon 0.1"
 import logging
 import argparse
 import commands
-import query
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
@@ -26,16 +25,15 @@ def main():
 
     args = parser.parse_args()
 
-    q = query.Query(args)
-
+    component = args.component.lower()
     if args.command == "update":
-        commands.run_update(q)
+        commands.run_update(component)
     elif args.command == "summary":
-        commands.run_summary(q)
+        commands.run_summary(component)
     elif args.command == "download":
-        commands.run_download(q)
+        commands.run_download(component, args.resolution_max)
     elif args.command == "analyze":
-        commands.run_analysis(q)
+        commands.run_analysis(component)
     else:
         logging.error("Command not implemented yet")
 

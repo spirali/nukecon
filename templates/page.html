@@ -1,0 +1,22 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+<title>{% block title %}{% endblock %}</title>
+    <style>
+
+</style>
+</head>
+
+<body>
+<div id="header">
+<h1>{{ self.title() }}</h1>
+</div>
+
+
+<div id="content clearfix">
+{% block content %}{% endblock %}
+</div>
+
+</body>
+
+</html>

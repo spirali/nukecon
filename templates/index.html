@@ -1,0 +1,18 @@
+{% extends "page.html" %}
+
+{% block title %}Nukecon{% endblock %}
+
+{% block content %}
+<div id="intro">
+<strong>Nukecon</strong> is ... [[ a tady by to chtelo jednu/dve vety ]]. 
+<br/>
+<a href="{{ url_for("about") }}">Read more</a>
+<h2>Components</h2>
+{% for component in components %}
+<a href="{{ url_for("results", component=component) }}">{{ component|upper }}</a>
+{% if not loop.last %}
+|
+{% endif %}
+{% endfor %}
+</div>
+{% endblock %}

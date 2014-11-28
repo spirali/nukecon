@@ -1,5 +1,5 @@
 
-from results import Result
+from structure import Result
 
 import Bio.PDB as PDB
 import math
@@ -69,8 +69,8 @@ class Analysis:
         logging.debug('\nPhase angle of pseudorotation P = {0:.2f}°'.format(p))
         logging.debug('Maximum degree of pucker tm = {0:.2f}°'.format(tm))
 
-        result = Result(structure, structure.get_chain(pdb_chain.id))
+        result = Result()
         result.gamma = gamma
         result.p = p
         result.tm = tm
-        self.results.append(result)
+        structure.get_chain(pdb_chain.id).add_result(result)

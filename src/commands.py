@@ -3,7 +3,6 @@ import chart
 from structure import StructureList
 import Bio.PDB as pdb
 from analysis import Analysis
-from results import process_results
 from nukecon import VERSION_STRING
 
 import time
@@ -17,16 +16,20 @@ import utils
 def ensure_data_dir():
     paths.makedir_if_not_exists(paths.DATA)
 
-def get_summary_filename(query):
+def get_summary_filename(component):
     return os.path.join(paths.DATA,
-                        "summary-{0}.xml".format(query.component))
+                        "summary-{0}.xml".format(component))
 
-def load_summary(query):
-    return StructureList(xmlfile=get_summary_filename(query))
+def get_results_filename(component):
+    return os.path.join(paths.DATA,
+                        "results-{0}.xml".format(component))
 
-def save_summary(query, structures):
+def load_summary(component):
+    return StructureList(xmlfile=get_summary_filename(component))
+
+def save_summary(component, structures):
     ensure_data_dir()
-    structures.save_summary(get_summary_filename(query))
+    structures.save(get_summary_filename(component))
 
 def get_template(name):
     loader = jinja2.FileSystemLoader(paths.TEMPLATES)
@@ -34,11 +37,11 @@ def get_template(name):
     return env.get_template(name)
 
 
-def run_update(query):
-    old_structures = load_summary(query)
+def run_update(component):
+    old_structures = load_summary(component)
     logging.info("Downloading list of structures with component %s ...",
-                 query.component)
-    pdb_ids = pdbquery.get_pdb_ids_by_component(query.component)
+                 component)
+    pdb_ids = pdbquery.get_pdb_ids_by_component(component)
     if not pdb_ids:
         logging.warn("No structures found")
         return
@@ -57,16 +60,15 @@ def run_update(query):
     new, removed = new_structures.compare(old_structures)
     if new > 0:
         logging.info("There is %s new structures", new)
-        logging.info("Use command 'summary' to see them")
     else:
         logging.info("There is no new structure")
     if removed > 0:
         logging.warn("%s structures is no longer at the server", removed)
 
-    save_summary(query, new_structures)
+    save_summary(component, new_structures)
 
-def run_summary(query):
-    structures = load_summary(query).filter_by_query(query)
+def run_summary(component):
+    structures = load_summary(component)
     structures.fill_download_info()
     resolution_stats = structures.make_resolution_stats()
     downloaded_size = len(structures.filter_downloaded())
@@ -84,20 +86,20 @@ def run_summary(query):
 
     template = get_template("summary.html")
     report_html = template.render(
-            filters=query.get_filter_names(),
             imgs=imgs,
             structures=structures.structures,
-            component=query.component.upper(),
+            component=component.upper(),
             version_string=VERSION_STRING,
             date=datetime.datetime.now())
-    with open("summary-{0}.html".format(query.component), "w") as f:
+    with open("summary-{0}.html".format(component), "w") as f:
         f.write(report_html)
     logging.info("Summary of %s structures written as 'summary-%s.html'",
             len(structures),
-            query.component)
+            component)
 
-def run_download(query):
-    structures = load_summary(query).filter_by_query(query)
+def run_download(component, max_resolution):
+    structures = load_summary(component).filter(
+            max_resolution=max_resolution)
     structures.fill_download_info()
     structures = structures.filter_not_downloaded()
 
@@ -111,24 +113,13 @@ def run_download(query):
             # To prevent of being kicked by too many connections
             time.sleep(5)
 
-def run_analysis(query):
-    structures = load_summary(query).filter_by_query(query)
+def run_analysis(component):
+    structures = load_summary(component)
+    structures
     structures.fill_download_info()
     structures = structures.filter_downloaded()
 
-    analysis = Analysis(structures, query.component)
+    analysis = Analysis(structures, component)
     analysis.run()
 
-    template = get_template("report.html")
-    report_html = template.render(
-            version_string=VERSION_STRING,
-            structures=structures,
-            component=query.component.upper(),
-            date=datetime.datetime.now(),
-            **process_results(analysis))
-    with open("report-{0}.html".format(query.component), "w") as f:
-        f.write(report_html)
-    logging.info("Report of analysis was written as 'report-%s.html'",
-                 query.component)
-
-
+    structures.save(get_results_filename(component))

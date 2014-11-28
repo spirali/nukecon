@@ -1,8 +1,62 @@
-
-import xml.etree.ElementTree as xml
 import logging
 import os.path
 import paths
+
+import xml.etree.ElementTree as xml
+import itertools
+
+GAMMA_LIMITS = [ 30,   90,    150,   210,  270,   330, 9999 ]
+GAMMA_NAMES = [ "sp", "+sc", "+ac", "ap", "-ac", "-sc", "sp" ]
+
+DIRECTION_LIMITS = [ 45, 135, 225, 315 ]
+DIRECTION_NAMES = [ "North", "East", "South", "West" ]
+
+class Result:
+
+    def __init__(self):
+        self.gamma = None
+        self.p = None
+        self.tm = None
+
+    @property
+    def dir_index(self):
+       for i, limit in enumerate(DIRECTION_LIMITS):
+            if self.p < limit:
+                return i
+       return 0
+
+    @property
+    def gamma_index(self):
+        for i, limit in enumerate(GAMMA_LIMITS):
+            if self.gamma < limit:
+                return i
+        else:
+            raise Exception("Invalid value")
+
+    @property
+    def dir_name(self):
+        return DIRECTION_NAMES[self.dir_index]
+
+    @property
+    def gamma_name(self):
+        return GAMMA_NAMES[self.gamma_index]
+
+    def to_element(self):
+        e = xml.Element("result")
+        e.set("gamma", str(self.gamma))
+        e.set("p", str(self.p))
+        e.set("tm", str(self.tm))
+        return e
+
+    @classmethod
+    def from_element(cls, e):
+        result = cls()
+        result.gamma = float(e.get("gamma"))
+        result.p = float(e.get("p"))
+        result.tm = float(e.get("tm"))
+        return result
+
+
 
 class Chain:
 
@@ -10,6 +64,10 @@ class Chain:
         self.id = id
         self.ec_numbers = []
         self.compound = None
+        self.results = []
+
+    def add_result(self, result):
+        self.results.append(result)
 
     @property
     def ec_numbers_str(self):
@@ -23,6 +81,8 @@ class Chain:
             e2 = xml.Element("ec-number")
             e2.text = str(ec_no)
             e.append(e2)
+        for result in self.results:
+            e.append(result.to_element())
         return e
 
     @classmethod
@@ -30,6 +90,7 @@ class Chain:
         chain = cls(element.get("id"))
         chain.ec_numbers = [ e.text for e in element.findall("ec-number") ]
         chain.compound = element.get("compound")
+        chain.results = [ Result.from_element(e) for e in element.findall("result") ]
         return chain
 
 
@@ -125,7 +186,7 @@ class StructureList:
             for e in tree.getroot():
                 self.structures.append(Structure.from_element(e))
 
-    def save_summary(self, filename):
+    def save(self, filename):
         root = xml.Element("structures")
 
         for s in self.structures:
@@ -158,12 +219,12 @@ class StructureList:
                 resolution_stats[4] += 1
         return resolution_stats
 
-    def filter_by_query(self, query):
+    def filter(self, max_resolution=None):
         structures = self.structures
-        if query.resolution_max is not None:
+        if max_resolution is not None:
             structures = (s for s in structures
                           if s.resolution and
-                             s.resolution <= query.resolution_max)
+                             s.resolution <= max_resolution)
         return StructureList(structures=list(structures))
 
     def filter_downloaded(self):
@@ -177,6 +238,14 @@ class StructureList:
     def fill_download_info(self):
         for s in self.structures:
             s.fill_download_info()
+
+    @property
+    def chains(self):
+        return itertools.chain.from_iterable(s.chains for s in self.structures)
+
+    @property
+    def results(self):
+        return itertools.chain.from_iterable(c.results for c in self.chains)
 
     def __iter__(self):
         return iter(self.structures)

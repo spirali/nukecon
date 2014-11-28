@@ -1,0 +1,138 @@
+{% extends "page.html" %}
+
+{% block title %}Nukecon / {{component|upper}}{% endblock %}
+
+
+{% macro render_field(field) %}
+  <p>{{ field.label }}
+  {{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </p>
+{% endmacro %}
+
+{% block content %}
+
+<div>
+    <form method="POST">
+        <fieldset>
+            <legend>Structure properties</legend>
+            {{ render_field(form.max_resolution) }}
+        </fieldset>
+    <p><input id="submit" class="button" type="submit" value="Show results"></p>
+    <a href="{{ url_for("index") }}">Back to index</a>
+    </form>
+</div>
+
+{% if has_results %}
+
+<div id="column">
+<div class="main">
+
+<h2>Summary</h2>
+<ul>
+    <li>Number structures: {{ structures|count }}
+    <li>Number conformations: {{ results|count }}
+</ul>
+
+<img src="{{ polar_chart }}"/>
+
+<h2>Distribution of conformations based on conformational analysis</h2>
+
+<ul>
+    {% for name, count, pc in dir_counts %}
+    <li> {{ name }}: {{ count }} ({{ pc|round(2) }}%)</li>
+    {% endfor %}
+</ul>
+<img src="{{ dir_counts_img }}"/>
+
+<h2>Allover percentage of conformations of sugar ring and C4-C5</h2>
+
+<table>
+<thead>
+<tr>
+    <th></th>
+    {% for name in dir_names %}
+    <th>{{ name }}</th>
+    {% endfor %}
+</tr>
+</thead>
+<tbody>
+    {% for name, row in sugar_table %}
+<tr>
+    <td>{{ name }}</td>
+    {% for c in row %}
+    <td>{{ c|round(2) }}%</td>
+    {% endfor %}
+</tr>
+    {% endfor %}
+</table>
+
+<img src="{{ sugar_chart }}"/>
+
+</div>
+</div>
+
+<h2>List of conformations</h2>
+<div class="table">
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Res.</th>
+    <th>Structure Title</th>
+    <th>Chain ID</th>
+    <th>Macromolecule Name</th>
+    <th>EC Numbers</th>
+    <th>&gamma;</th>
+    <th>P</th>
+    <th>&gamma;(degrees)</th>
+    <th>P (degrees)</th>
+    <th>tm (degrees)</th>
+</tr>
+</thead>
+<tbody>
+    {% for structure in structures %}
+    {% set structure_loop = loop %}
+    {% for chain in structure.chains %}
+    {% set chain_loop = loop %}
+    {% for result in chain.results %}
+    <tr class="{{ structure_loop.cycle("odd", "even") }}" >
+    {% if chain_loop.index == 1 and loop.index == 1 %}
+        <td>{{ structure.id }}</td>
+        <td>{{ structure.resolution|round(2) }}</td>
+        <td title="{{ structure.title }}">{{ structure.title|truncate(30) }}</td>
+    {% else %}
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+    {% endif %}
+    {% if loop.index == 1 %}
+        <td>{{ chain.id }}</td>
+        <td title="{{ chain.compound }}">{{ chain.compound|truncate(30) }}</td>
+        <td>{{ chain.ec_numbers_str }}</td>
+    {% else %}
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+    {% endif %}
+    <td>{{ result.dir_name[0] }}</td>
+    <td>{{ result.gamma_name }}</td>
+    <td>{{ result.gamma|round(2) }}&#176;</td>
+    <td>{{ result.p|round(2) }}&#176;</td>
+    <td>{{ result.tm|round(2) }}&#176;</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+</table>
+</div>
+
+{% endif %}
+
+{% endblock %}
