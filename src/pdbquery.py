@@ -1,8 +1,12 @@
 
 import httplib2
-import urllib.parse
-import urllib.request
 import csv
+
+import sys
+if sys.version_info >= (3, 0):
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 
 def get_pdb_ids_by_component(component):
     query = (
@@ -29,7 +33,7 @@ def get_report(pdb_ids, columns):
     url = "http://www.rcsb.org/pdb/rest/customReport.csv?" \
           "pdbids={0}&customReportColumns={1}&format=csv" \
           .format(",".join(pdb_ids), ",".join(columns))
-    f = urllib.request.urlopen(url)
+    f = urlopen(url)
     csv_string = f.read().decode("utf-8").replace("<br />", "\n")
     table = list(csv.reader(csv_string.splitlines()))
     return list(table[1:])

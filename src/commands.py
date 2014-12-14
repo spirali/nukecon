@@ -8,7 +8,6 @@ from nukecon import VERSION_STRING
 import time
 import paths
 import logging
-import jinja2
 import datetime
 import os
 import utils
