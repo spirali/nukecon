@@ -1,6 +1,6 @@
 import logging
 import os.path
-import paths
+from base import paths
 
 import xml.etree.ElementTree as xml
 import itertools
@@ -180,7 +180,7 @@ class StructureList:
         if xmlfile is not None:
             try:
                 tree = xml.parse(xmlfile)
-            except FileNotFoundError:
+            except Exception:
                 logging.debug("File with structures not found")
                 return
             for e in tree.getroot():

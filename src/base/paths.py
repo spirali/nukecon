@@ -1,6 +1,6 @@
 import os.path
 
-SRC = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(SRC)
 TEMPLATES = os.path.join(ROOT, "templates")
 STATIC = os.path.join(ROOT, "static")

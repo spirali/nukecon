@@ -1,8 +1,11 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
 import io
-
 import numpy as np
+import math
+
 
 def make_barplot(title, xtitle, names, values, figsize=(8, 2)):
     fig = plt.figure(figsize=figsize)
@@ -22,7 +25,7 @@ def make_pie(title, names, values, colors=None):
 
 def make_polar_chart(title, radial_values, axial_values, radial_label, axial_label, fontsize0=12):
     fig = plt.figure(figsize=(6, 6))
-    str_degree = u'\xb0'
+    str_degree =  '$^{\circ}$'
     line_style ='k:'
     line_width = 0.5
     """radial_label = r'$\nu$'
@@ -34,35 +37,45 @@ def make_polar_chart(title, radial_values, axial_values, radial_label, axial_lab
     n_phi = 60
     phi = np.linspace(0.0, 2 * np.pi,n_phi)
 
-    for r in [ 1, 1/3, 2/3 ]:
+    for r, style in [ (0.99, "k"), (1.0/3, "k:"), (2.0/3, "k:") ]:
         x = r * outer_circle * np.sin(phi)
         y = r *outer_circle * np.cos(phi)
-        plt.plot(x, y, 'k', lw=1)
+        plt.plot(x, y, style, lw=1)
 
     '''-------- labels of outher circle --------------'''
-    n_phi_lab = 13
-    phi_lab = np.linspace(0.0, 2 * np.pi, n_phi_lab)
-    r_lab = outer_circle*1.1
-    x = r_lab*np.sin(phi_lab)-0.07 * outer_circle
-    y = r_lab*np.cos(phi_lab)
-
+    n_phi_lab = 5
+    #phi_lab = [ 45, 135, np.pi / 4, np.linspace(np.pi/4, 2 * np.pi - np.pi/4, n_phi_lab)
+    #r_lab = outer_circle*1.1
+    #x = r_lab*np.sin(phi_lab)-0.07 * outer_circle
+    #y = r_lab*np.cos(phi_lab)
+ 
+    """
     for i in range(n_phi_lab - 1):
         str_label = str(int(np.round(phi_lab[i] / np.pi * 180))) + str_degree
-        plt.text(x[i], y[i], str_label, fontsize=fontsize0)
+        plt.text(x[i], y[i], str_label, fontsize=fontsize0/2)
+    """
+
+    for i, (text, ha, va) in enumerate(
+		(("East", "left", "center"), ("North", "center", "bottom"), ("West", "right", "center"), ("South", "center", "top"))):
+        plt.text(math.cos(i / 2.0 * np.pi) * outer_circle * 1.1, math.sin(i / 2.0 * np.pi) * outer_circle, text, fontsize=fontsize0, ha=ha, va=va)
+
 
     ''' name of radial axes '''
-    x_name = 1.1 * outer_circle * np.sin(np.mean(phi_lab[-2:]))
-    y_name = 1.15 * outer_circle * np.cos(np.mean(phi_lab[-2:]))
-    plt.text(x_name, y_name, radial_label, fontsize=fontsize0 + 2)
+    #x_name = 1.1 * outer_circle * np.sin(np.mean(phi_lab[-2:]))
+    #y_name = 1.15 * outer_circle * np.cos(np.mean(phi_lab[-2:]))
+    #plt.text(x_name, y_name, radial_label, fontsize=fontsize0 + 2)
 
     ''' -------- radial lines --------------------- '''
-    phi_radial_lines = np.linspace(0, 2*np.pi, 12, endpoint=False)
-    for i in range(phi_radial_lines.shape[0]):
-        x1 = outer_circle * np.sin(phi_radial_lines[i])
+    #phi_radial_lines = np.linspace(0, 2*np.pi, 6, endpoint=False)
+    for r in [ 45, 135, 225, 315 ]:
+	rr = r / 180.0 * np.pi
+        x1 = outer_circle * np.sin(rr)
         x = np.array([0.025*x1, x1])
-        y1 = outer_circle * np.cos(phi_radial_lines[i])
+        y1 = outer_circle * np.cos(rr)
         y = np.array([0.025 * y1, y1])
         plt.plot(x, y, line_style, lw=line_width)
+	plt.text(x1 * 1.06, y1 * 1.06, str(r) + str_degree, fontsize=fontsize0 * 0.75, ha="center", va="center")
+
 
     ''' --------- radial lines labels -------------------'''
     nr_radlab = 3

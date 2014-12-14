@@ -1,42 +1,43 @@
-VERSION_STRING = "Nukecon 0.1"
+from flask import Flask, render_template, abort, request
+from server.results import get_results
+from base import paths
 
-import logging
-import argparse
-import commands
+app = Flask("nukecon",
+            template_folder=paths.TEMPLATES,
+            static_folder=paths.STATIC)
+app.config["APPLICATION_ROOT"] = "/nukecon/"
 
-logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+COMPONENTS = [ "atp", "utp" ]
 
+from wtforms import Form, DecimalField
 
-def main():
-    parser = argparse.ArgumentParser(description=
-            "TODO Some description should be invented TODO")
-    parser.add_argument('command',
-                        metavar="COMMAND",
-                        choices=['update', 'summary', 'download', 'analyze'],
-                        help="update, summary, download or analyze")
+class ResultsForm(Form):
+    max_resolution = DecimalField('Maximal resolution', default=2.5)
 
-    parser.add_argument('component',
-                        metavar="COMPONENT")
+@app.route("/")
+def index():
+    return render_template("index.html", components=COMPONENTS)
 
-    parser.add_argument("--resolution-max",
-                        metavar="RESOLUTION",
-                        type=float,
-                        help="Maximal resolution of structures")
-
-    args = parser.parse_args()
-
-    component = args.component.lower()
-    if args.command == "update":
-        commands.run_update(component)
-    elif args.command == "summary":
-        commands.run_summary(component)
-    elif args.command == "download":
-        commands.run_download(component, args.resolution_max)
-    elif args.command == "analyze":
-        commands.run_analysis(component)
+@app.route("/results/<component>", methods=("POST", "GET"))
+def results(component):
+    if component not in COMPONENTS:
+        abort(404)
+    form = ResultsForm(request.form)
+    if request.method == "POST" and form.validate():
+        results = get_results(component, form)
     else:
-        logging.error("Command not implemented yet")
+        results = {}
+    return render_template("results.html",
+                           component=component,
+                           form=form,
+                           has_results=bool(results),
+                           **results)
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
+

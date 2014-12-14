@@ -1,10 +1,10 @@
 
 import chart
-import utils
+from base import utils
+from base import paths
 
 import os
-import paths
-from structure import StructureList, GAMMA_NAMES, DIRECTION_NAMES
+from base.structure import StructureList, GAMMA_NAMES, DIRECTION_NAMES
 
 def pc_fn(total):
     if total == 0:
@@ -25,8 +25,6 @@ def get_results(component, form):
 
     if len(results) == 0:
         return {}
-
-    print(list(c.results for c in structures.chains))
 
     p_values = [ r.p for r in results ]
     tm_values = [ r.tm for r in results ]

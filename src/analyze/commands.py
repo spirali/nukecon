@@ -1,17 +1,14 @@
-import pdbquery
-import chart
-from structure import StructureList
+from analyze import pdbquery
+from base.structure import StructureList
 import Bio.PDB as pdb
 from analysis import Analysis
-from nukecon import VERSION_STRING
+import base.paths as paths
+from base import utils
 
 import time
-import paths
 import logging
-import jinja2
 import datetime
 import os
-import utils
 
 def ensure_data_dir():
     paths.makedir_if_not_exists(paths.DATA)
@@ -89,7 +86,6 @@ def run_summary(component):
             imgs=imgs,
             structures=structures.structures,
             component=component.upper(),
-            version_string=VERSION_STRING,
             date=datetime.datetime.now())
     with open("summary-{0}.html".format(component), "w") as f:
         f.write(report_html)

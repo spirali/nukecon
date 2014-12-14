@@ -1,5 +1,5 @@
 
-from structure import Result
+from base.structure import Result
 
 import Bio.PDB as PDB
 import math
@@ -49,13 +49,13 @@ class Analysis:
             v4 = vectors[(i + 3) % 5]
             v = math.degrees(PDB.calc_dihedral(v1, v2, v3, v4))
             vs.append(v)
-            logging.debug("v{0}={1:.2f}°".format(i + 1, v))
+            logging.debug("v{0}={1:.2f}".format(i + 1, v))
 
         gamma = math.degrees(
                     PDB.calc_dihedral(vectors[6], vectors[5], vectors[0], vectors[4]))
         if gamma < 0:
             gamma += 360
-        logging.debug("gamma = {0:.2f}°".format(gamma))
+        logging.debug("gamma = {0:.2f}".format(gamma))
 
         y = vs[4]+vs[1]-vs[3]-vs[0]
         x = 2*vs[2]*(math.sin(math.pi/5)+math.sin(math.pi/2.5))
@@ -66,8 +66,8 @@ class Analysis:
         if p < 0:
             p += 360
 
-        logging.debug('\nPhase angle of pseudorotation P = {0:.2f}°'.format(p))
-        logging.debug('Maximum degree of pucker tm = {0:.2f}°'.format(tm))
+        logging.debug('\nPhase angle of pseudorotation P = {0:.2f}'.format(p))
+        logging.debug('Maximum degree of pucker tm = {0:.2f}'.format(tm))
 
         result = Result()
         result.gamma = gamma
