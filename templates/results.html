@@ -89,10 +89,10 @@
     <th>Chain ID</th>
     <th>Macromolecule Name</th>
     <th>EC Numbers</th>
-    <th>&gamma;</th>
     <th>P</th>
-    <th>&gamma;(degrees)</th>
+    <th>&gamma;</th>
     <th>P (degrees)</th>
+    <th>&gamma;(degrees)</th>
     <th>tm (degrees)</th>
 </tr>
 </thead>
@@ -123,8 +123,8 @@
     {% endif %}
     <td>{{ result.dir_name[0] }}</td>
     <td>{{ result.gamma_name }}</td>
-    <td>{{ result.gamma|round(2) }}&#176;</td>
     <td>{{ result.p|round(2) }}&#176;</td>
+    <td>{{ result.gamma|round(2) }}&#176;</td>
     <td>{{ result.tm|round(2) }}&#176;</td>
     </tr>
     {% endfor %}
