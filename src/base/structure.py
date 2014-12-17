@@ -229,15 +229,20 @@ class StructureList:
 
     def filter_downloaded(self):
         structures = [ s for s in self.structures if s.downloaded ]
-        return StructureList(structures=list(structures))
+        return StructureList(structures=structures)
 
     def filter_not_downloaded(self):
         structures = [ s for s in self.structures if not s.downloaded ]
-        return StructureList(structures=list(structures))
+        return StructureList(structures=structures)
 
     def fill_download_info(self):
         for s in self.structures:
             s.fill_download_info()
+
+    def filter_with_results(self):
+        structures = [ s for s in self.structures
+                       if any(c.results for c in s.chains) ]
+        return StructureList(structures=structures)
 
     @property
     def chains(self):
