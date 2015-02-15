@@ -4,6 +4,7 @@ from base import paths
 
 import xml.etree.ElementTree as xml
 import itertools
+import copy
 
 GAMMA_LIMITS = [ 30,   90,    150,   210,  270,   330, 9999 ]
 GAMMA_NAMES = [ "sp", "+sc", "+ac", "ap", "-ac", "-sc", "sp" ]
@@ -11,12 +12,14 @@ GAMMA_NAMES = [ "sp", "+sc", "+ac", "ap", "-ac", "-sc", "sp" ]
 DIRECTION_LIMITS = [ 45, 135, 225, 315 ]
 DIRECTION_NAMES = [ "North", "East", "South", "West" ]
 
+
 class Result:
 
     def __init__(self):
         self.gamma = None
         self.p = None
         self.tm = None
+        self.mixed_results = 1
 
     @property
     def dir_index(self):
@@ -94,6 +97,28 @@ class Chain:
         return chain
 
 
+def avg_results(results):
+    r = Result()
+    l = len(results)
+    r.mixed_results = l
+    r.gamma = sum(s.gamma for s in results) / l
+    r.tm = sum(s.tm for s in results) / l
+    r.p = sum(s.p for s in results) / l
+    return r
+
+def join_chains(chains):
+    chain = Chain(",".join(c.id for c in chains))
+    chain.ec_numbers = chains[0].ec_numbers
+    chain.compound = chains[0].compound
+    results = list(itertools.chain.from_iterable(
+                   c.results for c in chains))
+    if results:
+        chain.results = [ avg_results(results) ]
+    else:
+        chain.results = []
+    return chain
+
+
 class Structure:
 
     def __init__(self, id):
@@ -114,6 +139,12 @@ class Structure:
         for chain in self.chains:
             if chain.id == id:
                 return chain
+
+    def join_chains(self):
+        s = copy.copy(self)
+        if self.chains:
+            s.chains = [ join_chains(self.chains) ]
+        return s
 
     def to_element(self):
         e = xml.Element("structure")
@@ -242,6 +273,10 @@ class StructureList:
     def filter_with_results(self):
         structures = [ s for s in self.structures
                        if any(c.results for c in s.chains) ]
+        return StructureList(structures=structures)
+
+    def join_chains(self):
+        structures = [ s.join_chains() for s in self.structures ]
         return StructureList(structures=structures)
 
     @property

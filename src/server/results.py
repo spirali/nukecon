@@ -21,6 +21,8 @@ def get_results(component, form):
                              "results-{0}.xml".format(component))
     structures = StructureList(xmlfile=filename).filter(
             max_resolution=form.max_resolution.data)
+    if form.join_results.data == 'join':
+        structures = structures.join_chains()
     structures = structures.filter_with_results()
     results = list(structures.results)
 

@@ -172,3 +172,23 @@ input[type="checkbox"], select {
 fieldset {
 	border-color: green;
 }
+
+input[type="text"], select {
+    width: 60%;
+}
+
+label {
+    float: left;
+    width: 38%;
+    text-align: left;
+    margin-right: 0.5em;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+}
+
+.form-group {
+
+}

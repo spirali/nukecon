@@ -1,6 +1,8 @@
-from flask import Flask, render_template, abort, request
 from server.results import get_results
 from base import paths
+
+from flask import Flask, render_template, abort, request
+from wtforms import Form, DecimalField, SelectField
 
 app = Flask("nukecon",
             template_folder=paths.TEMPLATES,
@@ -9,10 +11,14 @@ app.config["APPLICATION_ROOT"] = "/nukecon/"
 
 COMPONENTS = [ "atp", "utp" ]
 
-from wtforms import Form, DecimalField
 
 class ResultsForm(Form):
     max_resolution = DecimalField('Maximal resolution', default=2.5)
+    join_results = SelectField(
+            'Postprocessing',
+            choices=[ ('none', 'No postprocessing'),
+                      ('join', 'Join chains and make average') ],
+            default='none')
 
 @app.route("/")
 def index():
