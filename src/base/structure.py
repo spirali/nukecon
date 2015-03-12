@@ -1,6 +1,7 @@
 import logging
 import os.path
 from base import paths
+from base import utils
 
 import xml.etree.ElementTree as xml
 import itertools
@@ -96,27 +97,58 @@ class Chain:
         chain.results = [ Result.from_element(e) for e in element.findall("result") ]
         return chain
 
-
 def avg_results(results):
     r = Result()
     l = len(results)
     r.mixed_results = l
-    r.gamma = sum(s.gamma for s in results) / l
-    r.tm = sum(s.tm for s in results) / l
-    r.p = sum(s.p for s in results) / l
+    r.gamma = (sum(s.gamma for s in results) % 360.0) / l
+    r.tm = (sum(s.tm for s in results) % 360.0) / l
+    r.p = (sum(s.p for s in results) % 360.0) / l
     return r
 
-def join_chains(chains):
-    chain = Chain(",".join(c.id for c in chains))
-    chain.ec_numbers = chains[0].ec_numbers
-    chain.compound = chains[0].compound
-    results = list(itertools.chain.from_iterable(
-                   c.results for c in chains))
-    if results:
-        chain.results = [ avg_results(results) ]
+def angle_diff(a, b):
+    d = abs(a - b)
+    if d > 180.0:
+        return d - 180.0
     else:
-        chain.results = []
-    return chain
+        return d
+
+def join_chains(chains, angle_limit):
+
+    results = []
+    for c in chains:
+        results.extend((c, r) for r in c.results)
+
+    if not results:
+        return results
+
+    results.sort(key=lambda (c,r): r.p)
+
+    for n in xrange(1, len(results) + 1):
+        best_angle = 360.0
+        best_partition = None
+        for partition in utils.make_partitions(results, n):
+            angle = 0
+            for s in partition:
+                a = sum(angle_diff(s[i-1][1].p, s[i][1].p) for i in xrange(1, len(s)))
+                if a > angle:
+                    angle = a
+            if angle < best_angle:
+                best_angle = angle
+                best_partition = partition
+        if best_angle <= angle_limit:
+            break
+
+    result = []
+    for s in best_partition:
+        chains = list(set(c for c, r in s))
+        chains.sort(key=lambda c: c.id)
+        chain = Chain(",".join(c.id for c in chains))
+        chain.results = [ avg_results([r for c, r, in s]) ]
+        chain.ec_numbers = chains[0].ec_numbers
+        chain.compound = chains[0].compound
+        result.append(chain)
+    return result
 
 
 class Structure:
@@ -143,7 +175,7 @@ class Structure:
     def join_chains(self):
         s = copy.copy(self)
         if self.chains:
-            s.chains = [ join_chains(self.chains) ]
+            s.chains = join_chains(self.chains, 30.0)
         return s
 
     def to_element(self):
