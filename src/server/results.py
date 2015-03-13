@@ -22,7 +22,7 @@ def get_results(component, form):
     structures = StructureList(xmlfile=filename).filter(
             max_resolution=form.max_resolution.data)
     if form.join_results.data == 'join':
-        structures = structures.join_chains()
+        structures = structures.join_chains(form.join_angle.data)
     structures = structures.filter_with_results()
     results = list(structures.results)
 

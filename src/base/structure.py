@@ -172,10 +172,10 @@ class Structure:
             if chain.id == id:
                 return chain
 
-    def join_chains(self):
+    def join_chains(self, angle_limit):
         s = copy.copy(self)
         if self.chains:
-            s.chains = join_chains(self.chains, 30.0)
+            s.chains = join_chains(self.chains, angle_limit)
         return s
 
     def to_element(self):
@@ -307,8 +307,8 @@ class StructureList:
                        if any(c.results for c in s.chains) ]
         return StructureList(structures=structures)
 
-    def join_chains(self):
-        structures = [ s.join_chains() for s in self.structures ]
+    def join_chains(self, angle_limit):
+        structures = [ s.join_chains(angle_limit) for s in self.structures ]
         return StructureList(structures=structures)
 
     @property

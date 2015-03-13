@@ -17,8 +17,10 @@ class ResultsForm(Form):
     join_results = SelectField(
             'Postprocessing',
             choices=[ ('none', 'No postprocessing'),
-                      ('join', 'Join chains and make average') ],
+                      ('join', 'Merge chains and make average') ],
             default='none')
+    join_angle = DecimalField('Merge angle (&#176;)', default=30)
+
 
 @app.route("/")
 def index():
