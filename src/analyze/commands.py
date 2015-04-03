@@ -1,7 +1,7 @@
 from analyze import pdbquery
 from base.structure import StructureList
 import Bio.PDB as pdb
-from analysis import Analysis
+from analyze.analysis import Analysis
 import base.paths as paths
 from base import utils
 

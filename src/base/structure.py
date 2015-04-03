@@ -122,7 +122,7 @@ def join_chains(chains, angle_limit):
     if not results:
         return results
 
-    results.sort(key=lambda (c,r): r.p)
+    results.sort(key=lambda c,r: r.p)
 
     for n in xrange(1, len(results) + 1):
         best_angle = 360.0
