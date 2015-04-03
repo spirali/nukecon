@@ -9,7 +9,7 @@ app = Flask("nukecon",
             static_folder=paths.STATIC)
 app.config["APPLICATION_ROOT"] = "/nukecon/"
 
-COMPONENTS = [ "atp", "utp" ]
+COMPONENTS = [ "atp", "gdp", "utp" ]
 
 
 class ResultsForm(Form):

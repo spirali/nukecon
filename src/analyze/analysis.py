@@ -30,9 +30,10 @@ class Analysis:
                         self.process_residue(structure, pdb_structure, pdb_chain, residue)
 
     def process_residue(self, structure, pdb_structure, pdb_chain, residue):
-        if not all(name in residue for name in self.atom_names):
+	residue_atoms = [ atom.get_name() for atom in residue ]
+        if not all(name in residue_atoms for name in self.atom_names):
             missing_atoms = [ name for name in self.atom_names
-                                   if name not in residue ]
+                                   if name not in residue_atoms ]
             self.rejected.append((pdb_structure.id,
                                   pdb_chain.id,
                                   "Does not contain " + ",".join(
