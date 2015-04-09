@@ -7,7 +7,6 @@ from base import utils
 
 import time
 import logging
-import datetime
 import os
 
 def ensure_data_dir():
@@ -27,12 +26,6 @@ def load_summary(component):
 def save_summary(component, structures):
     ensure_data_dir()
     structures.save(get_summary_filename(component))
-
-def get_template(name):
-    loader = jinja2.FileSystemLoader(paths.TEMPLATES)
-    env = jinja2.Environment(loader=loader)
-    return env.get_template(name)
-
 
 def run_update(component):
     old_structures = load_summary(component)
@@ -63,35 +56,6 @@ def run_update(component):
         logging.warn("%s structures is no longer at the server", removed)
 
     save_summary(component, new_structures)
-
-def run_summary(component):
-    structures = load_summary(component)
-    structures.fill_download_info()
-    resolution_stats = structures.make_resolution_stats()
-    downloaded_size = len(structures.filter_downloaded())
-    imgs = []
-
-    fig = chart.make_barplot("Resolution of structures", "# structures",
-            [ "N/A", "<= 1", "(1, 2]", "(2, 3]", "> 3" ], resolution_stats)
-    imgs.append(chart.make_web_png(fig))
-
-    fig = chart.make_pie("",
-            [ "Downloaded", "Not downloaded"] ,
-            [ downloaded_size, len(structures) - downloaded_size],
-            colors=("green", "gray"))
-    imgs.append(chart.make_web_png(fig))
-
-    template = get_template("summary.html")
-    report_html = template.render(
-            imgs=imgs,
-            structures=structures.structures,
-            component=component.upper(),
-            date=datetime.datetime.now())
-    with open("summary-{0}.html".format(component), "w") as f:
-        f.write(report_html)
-    logging.info("Summary of %s structures written as 'summary-%s.html'",
-            len(structures),
-            component)
 
 def run_download(component, max_resolution):
     structures = load_summary(component).filter(

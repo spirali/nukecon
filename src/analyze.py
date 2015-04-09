@@ -12,7 +12,7 @@ def main():
             "TODO Some description should be invented TODO")
     parser.add_argument('command',
                         metavar="COMMAND",
-                        choices=['update', 'summary', 'download', 'analyze'],
+                        choices=['update', 'download', 'analyze'],
                         help="update, summary, download or analyze")
 
     parser.add_argument('component',
@@ -27,8 +27,6 @@ def main():
 
     component = args.component.lower()
     if args.command == "update":
-        commands.run_update(component)
-    elif args.command == "summary":
         commands.run_summary(component)
     elif args.command == "download":
         commands.run_download(component, args.resolution_max)
