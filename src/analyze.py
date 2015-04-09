@@ -3,8 +3,22 @@ VERSION_STRING = "Nukecon 0.1"
 import logging
 import argparse
 from analyze import commands
+from nukecon import COMPONENTS
+
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+
+def run_command(component, args):
+    logging.info("Component: %s", component)
+    if args.command == "update":
+        commands.run_update(component)
+    elif args.command == "download":
+        commands.run_download(component, args.resolution_max)
+    elif args.command == "analyze":
+        commands.run_analysis(component)
+    else:
+        logging.error("Command not implemented")
+
 
 
 def main():
@@ -26,14 +40,11 @@ def main():
     args = parser.parse_args()
 
     component = args.component.lower()
-    if args.command == "update":
-        commands.run_summary(component)
-    elif args.command == "download":
-        commands.run_download(component, args.resolution_max)
-    elif args.command == "analyze":
-        commands.run_analysis(component)
+    if component == "all":
+        for component in COMPONENTS:
+            run_command(component, args)
     else:
-        logging.error("Command not implemented yet")
+        run_command(component, args)
 
 
 if __name__ == "__main__":
