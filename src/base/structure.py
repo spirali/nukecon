@@ -251,6 +251,19 @@ class StructureList:
             for e in tree.getroot():
                 self.structures.append(Structure.from_element(e))
 
+    def get_missing(self, slist):
+        my = set(s.id for s in self.structures)
+        other = set(s.id for s in slist.structures)
+        diff = other - my
+        result = []
+        for s in slist.structures:
+            if s.id in diff:
+                result.append(s)
+        return StructureList(structures=result)
+
+    def add(self, slist):
+        self.structures.extend(slist.structures)
+
     def save(self, filename):
         root = xml.Element("structures")
 

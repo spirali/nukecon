@@ -23,6 +23,9 @@ def get_results_filename(component):
 def load_summary(component):
     return StructureList(xmlfile=get_summary_filename(component))
 
+def load_results(component):
+    return StructureList(xmlfile=get_results_filename(component))
+
 def save_summary(component, structures):
     ensure_data_dir()
     structures.save(get_summary_filename(component))
@@ -35,6 +38,7 @@ def run_update(component):
     if not pdb_ids:
         logging.warn("No structures found")
         return
+    time.sleep(2)
     logging.info("%s structures found. Downloading report ...", len(pdb_ids))
     report_data = pdbquery.get_report(pdb_ids,
                                       ("structureId",
@@ -79,7 +83,12 @@ def run_analysis(component):
     structures.fill_download_info()
     structures = structures.filter_downloaded()
 
-    analysis = Analysis(structures, component)
+    results = load_results(component)
+    new_structures = results.get_missing(structures)
+    logging.info("%s old results / %s new results", len(results), len(new_structures))
+
+    analysis = Analysis(new_structures, component)
     analysis.run()
 
-    structures.save(get_results_filename(component))
+    results.add(new_structures)
+    results.save(get_results_filename(component))

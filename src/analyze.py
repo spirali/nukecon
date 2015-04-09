@@ -8,6 +8,7 @@ from nukecon import COMPONENTS
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
+
 def run_command(component, args):
     logging.info("Component: %s", component)
     if args.command == "update":
@@ -18,7 +19,6 @@ def run_command(component, args):
         commands.run_analysis(component)
     else:
         logging.error("Command not implemented")
-
 
 
 def main():
