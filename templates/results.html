@@ -2,7 +2,6 @@
 
 {% block title %}Nukecon / {{component|upper}}{% endblock %}
 
-
 {% macro render_field(field) %}
   <p>{{ field.label }}
   {{ field(**kwargs)|safe }}
@@ -17,6 +16,20 @@
 {% endmacro %}
 
 {% block content %}
+
+<p>
+<table>
+	<tr>
+	{% for c in components %}
+		{% if c != component %}
+		<td><a href="{{ url_for("results", component=c) }}">{{ c|upper }}</a></td>
+		{% else %}
+		<td class='menuselected'><span class='menuselected'>{{ c | upper }}</span></td>
+		{% endif %}
+	{% endfor %}
+	</tr>
+</table>
+</p>
 
 <div>
     <form method="POST">

@@ -9,8 +9,25 @@ app = Flask("nukecon",
             static_folder=paths.STATIC)
 app.config["APPLICATION_ROOT"] = "/nukecon/"
 
-COMPONENTS = [ "atp", "gdp", "utp" ]
-
+COMPONENTS = [
+    "acp",
+    "adn",
+    "adp",
+    "amp",
+    "anp",
+    "atp",
+    "dgt",
+    "dtp",
+    "gdp",
+    "gnp",
+    "gtp",
+    "ndp",
+    "thp",
+    "ttp",
+    "udp",
+    "ump",
+    "utp",
+]
 
 class ResultsForm(Form):
     max_resolution = DecimalField('Maximal resolution', default=2.5)
@@ -37,6 +54,7 @@ def results(component):
         results = {}
     return render_template("results.html",
                            component=component,
+                           components=COMPONENTS,
                            form=form,
                            has_results=bool(results),
                            **results)

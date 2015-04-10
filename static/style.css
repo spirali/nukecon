@@ -56,6 +56,10 @@ tr.alt td {
 	background-color: #EAF2D3;
 }
 
+td.menuselected {
+	background-color: #EAF2D3;
+}
+
 td.empty {
 }
 

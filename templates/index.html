@@ -6,13 +6,19 @@
 <div id="intro">
 <strong>Nukecon</strong> is ... [[ a tady by to chtelo jednu/dve vety ]]. 
 <br/>
+<p>
 <a href="{{ url_for("about") }}">Read more</a>
-<h2>Components</h2>
-{% for component in components %}
-<a href="{{ url_for("results", component=component) }}">{{ component|upper }}</a>
-{% if not loop.last %}
-|
-{% endif %}
-{% endfor %}
-</div>
+</p>
+<p>
+<p>
+<table>
+	<tr>
+	{% for c in components %}
+		<td><a href="{{ url_for("results", component=c) }}">{{ c|upper }}</a></td>
+	{% endfor %}
+	</tr>
+</table>
+</p>
+
+</p>
 {% endblock %}
