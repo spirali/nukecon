@@ -137,6 +137,10 @@ clearfix:before,
 	margin-right: auto;
 }
 
+.table h2 {
+	text-align: center;
+}
+
 .button {
 	background-color: #207020;
 	border-radius: 5px;
