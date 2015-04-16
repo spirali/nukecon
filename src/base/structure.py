@@ -115,7 +115,7 @@ def angle_diff(a, b):
 
 def join_chains(chains, angle_limit):
     def key(v):
-	return v[1].p
+        return v[1].p
 
     results = []
     for c in chains:
@@ -193,6 +193,11 @@ class Structure:
 
     def fill_download_info(self):
         self.downloaded = os.path.isfile(self.filename)
+
+    def strip_empty_chains(self):
+        s = copy.copy(self)
+        s.chains = [ chain for chain in self.chains if chain.results ]
+        return s
 
     @classmethod
     def from_datarow(cls, row):
@@ -325,6 +330,10 @@ class StructureList:
     def join_chains(self, angle_limit):
         structures = [ s.join_chains(angle_limit) for s in self.structures ]
         return StructureList(structures=structures)
+
+    def strip_empty_chains(self):
+        return StructureList(
+                structures=[ s.strip_empty_chains() for s in self.structures ])
 
     @property
     def chains(self):

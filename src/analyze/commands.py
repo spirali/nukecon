@@ -90,5 +90,6 @@ def run_analysis(component):
     analysis = Analysis(new_structures, component)
     analysis.run()
 
+    new_structures = new_structures.strip_empty_chains()
     results.add(new_structures)
     results.save(get_results_filename(component))

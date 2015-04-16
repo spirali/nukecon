@@ -30,7 +30,7 @@ class Analysis:
                         self.process_residue(structure, pdb_structure, pdb_chain, residue)
 
     def process_residue(self, structure, pdb_structure, pdb_chain, residue):
-	residue_atoms = [ atom.get_name() for atom in residue ]
+        residue_atoms = [ atom.get_name() for atom in residue ]
         if not all(name in residue_atoms for name in self.atom_names):
             missing_atoms = [ name for name in self.atom_names
                                    if name not in residue_atoms ]
