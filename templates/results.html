@@ -5,13 +5,13 @@
 {% macro render_field(field) %}
   <p>{{ field.label }}
   {{ field(**kwargs)|safe }}
-  {% if field.errors %}
+  {%- if field.errors %}
     <ul class=errors>
-    {% for error in field.errors %}
+    {%- for error in field.errors %}
       <li>{{ error }}</li>
-    {% endfor %}
+    {%- endfor %}
     </ul>
-  {% endif %}
+  {%- endif %}
   </p>
 {% endmacro %}
 
@@ -20,13 +20,13 @@
 <p>
 <table>
 	<tr>
-	{% for c in components %}
-		{% if c != component %}
+	{%- for c in components %}
+		{%- if c != component %}
 		<td><a href="{{ url_for("results", component=c) }}">{{ c|upper }}</a></td>
-		{% else %}
+		{%- else %}
 		<td class='menuselected'><span class='menuselected'>{{ c | upper }}</span></td>
-		{% endif %}
-	{% endfor %}
+		{%- endif %}
+	{%- endfor %}
 	</tr>
 </table>
 </p>
@@ -60,9 +60,9 @@
 <h2>Distribution of conformations based on conformational analysis</h2>
 
 <ul>
-    {% for name, count, pc in dir_counts %}
+    {%- for name, count, pc in dir_counts %}
     <li> {{ name }}: {{ count }} ({{ pc|round(2) }}%)</li>
-    {% endfor %}
+    {%- endfor %}
 </ul>
 <img src="{{ dir_counts_img }}"/>
 
@@ -72,20 +72,20 @@
 <thead>
 <tr>
     <th></th>
-    {% for name in dir_names %}
+    {%- for name in dir_names %}
     <th>{{ name }}</th>
-    {% endfor %}
+    {%- endfor %}
 </tr>
 </thead>
 <tbody>
-    {% for name, row in sugar_table %}
+    {%- for name, row in sugar_table %}
 <tr>
     <td>{{ name }}</td>
-    {% for c in row %}
+    {%- for c in row %}
     <td>{{ c|round(2) }}%</td>
-    {% endfor %}
+    {%- endfor %}
 </tr>
-    {% endfor %}
+    {%- endfor %}
 </table>
 
 <img src="{{ sugar_chart }}"/>
@@ -113,30 +113,30 @@
 </tr>
 </thead>
 <tbody>
-    {% for structure in structures %}
-    {% set structure_loop = loop %}
-    {% for chain in structure.chains %}
-    {% set chain_loop = loop %}
-    {% for result in chain.results %}
+    {%- for structure in structures %}
+    {%- set structure_loop = loop %}
+    {%- for chain in structure.chains %}
+    {%- set chain_loop = loop %}
+    {%- for result in chain.results %}
     <tr class="{{ structure_loop.cycle("odd", "even") }}" >
-    {% if chain_loop.index == 1 and loop.index == 1 %}
+    {%- if chain_loop.index == 1 and loop.index == 1 %}
         <td>{{ structure.id }}</td>
         <td>{{ structure.resolution|round(2) }}</td>
         <td title="{{ structure.title }}">{{ structure.title|truncate(30) }}</td>
-    {% else %}
+    {%- else %}
         <td class="empty"></td>
         <td class="empty"></td>
         <td class="empty"></td>
-    {% endif %}
-    {% if loop.index == 1 %}
+    {%- endif -%}
+    {%- if loop.index == 1 %}
         <td>{{ chain.id }}</td>
         <td title="{{ chain.compound }}">{{ chain.compound|truncate(30) }}</td>
         <td>{{ chain.ec_numbers_str }}</td>
-    {% else %}
+    {%- else %}
         <td class="empty"></td>
         <td class="empty"></td>
         <td class="empty"></td>
-    {% endif %}
+    {%- endif %}
     <td>{{ result.dir_name[0] }}</td>
     <td>{{ result.gamma_name }}</td>
     <td>{{ result.p|round(2) }}&#176;</td>
@@ -144,9 +144,9 @@
     <td>{{ result.tm|round(2) }}&#176;</td>
     <td>{{ result.mixed_results }}</td>
     </tr>
-    {% endfor %}
-    {% endfor %}
-    {% endfor %}
+    {%- endfor %}
+    {%- endfor %}
+    {%- endfor %}
 </table>
 </div>
 
