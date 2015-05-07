@@ -1,6 +1,7 @@
 # Nukecon
 
-*Nukecon* is ... TODO this should be definitely filled
+*NukeCon* is a PDB-based tool for understanding conformational aspects of
+interactions between proteins and nucleosides or nucleotides.
 
 *Nukecon* is relased under BSD license (3-clause)
 
