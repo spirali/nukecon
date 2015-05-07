@@ -122,7 +122,7 @@
     {%- if chain_loop.index == 1 and loop.index == 1 %}
         <td><a href="http://www.rcsb.org/pdb/explore.do?structureId={{ structure.id }}">{{ structure.id }}</a></td>
         <td>{{ structure.resolution|round(2) }}</td>
-        <td title="{{ structure.title }}">{{ structure.title|truncate(30) }}</td>
+        <td title="{{ structure.title }}">{{ structure.title|truncate(20,True) }}</td>
     {%- else %}
         <td class="empty"></td>
         <td class="empty"></td>
@@ -130,7 +130,7 @@
     {%- endif -%}
     {%- if loop.index == 1 %}
         <td>{{ chain.id }}</td>
-        <td title="{{ chain.compound }}">{{ chain.compound|truncate(30) }}</td>
+        <td title="{{ chain.compound }}">{{ chain.compound|truncate(20,True) }}</td>
         <td>{{ chain.ec_numbers_str }}</td>
     {%- else %}
         <td class="empty"></td>
