@@ -120,7 +120,7 @@
     {%- for result in chain.results %}
     <tr class="{{ structure_loop.cycle("odd", "even") }}" >
     {%- if chain_loop.index == 1 and loop.index == 1 %}
-        <td>{{ structure.id }}</td>
+        <td><a href="http://www.rcsb.org/pdb/explore.do?structureId={{ structure.id }}">{{ structure.id }}</a></td>
         <td>{{ structure.resolution|round(2) }}</td>
         <td title="{{ structure.title }}">{{ structure.title|truncate(30) }}</td>
     {%- else %}
