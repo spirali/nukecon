@@ -20,6 +20,7 @@ class Result:
         self.gamma = None
         self.p = None
         self.tm = None
+        self.synanti = None
         self.mixed_results = 1
 
     @property
@@ -50,6 +51,7 @@ class Result:
         e.set("gamma", str(self.gamma))
         e.set("p", str(self.p))
         e.set("tm", str(self.tm))
+        e.set("synanti", str(self.synanti))
         return e
 
     @classmethod
@@ -58,8 +60,8 @@ class Result:
         result.gamma = float(e.get("gamma"))
         result.p = float(e.get("p"))
         result.tm = float(e.get("tm"))
+        result.synanti = float(e.get("synanti"))
         return result
-
 
 
 class Chain:

@@ -41,6 +41,16 @@ class Analysis:
             logging.debug("Rejected %s", self.rejected[-1])
             return
         vectors = [ residue[name].get_vector() for name in self.atom_names ]
+
+        if residue.has_id("N9"):
+            v8 = residue["C4"].get_vector()
+            v9 = residue["N9"].get_vector()
+        elif residue.has_id("N1"):
+            v8 = residue["N1"].get_vector()
+            v9 = residue["C2"].get_vector()
+        else:
+            raise Exception("N9 or N1 not found")
+
         vs = []
 
         for i in range(5):
@@ -51,6 +61,7 @@ class Analysis:
             v = math.degrees(PDB.calc_dihedral(v1, v2, v3, v4))
             vs.append(v)
             logging.debug("v{0}={1:.2f}".format(i + 1, v))
+
 
         gamma = math.degrees(
                     PDB.calc_dihedral(vectors[6], vectors[5], vectors[0], vectors[4]))
@@ -70,8 +81,12 @@ class Analysis:
         logging.debug('\nPhase angle of pseudorotation P = {0:.2f}'.format(p))
         logging.debug('Maximum degree of pucker tm = {0:.2f}'.format(tm))
 
+        synanti = math.degrees(
+                PDB.calc_dihedral(vectors[1], vectors[2], v8, v9))
+
         result = Result()
         result.gamma = gamma
         result.p = p
         result.tm = tm
+        result.synanti = synanti
         structure.get_chain(pdb_chain.id).add_result(result)

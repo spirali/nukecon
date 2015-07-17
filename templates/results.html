@@ -109,6 +109,7 @@
     <th>P (degrees)</th>
     <th>&gamma;(degrees)</th>
     <th>tm (degrees)</th>
+    <th>SA (degrees)</th>
     <th>R</th>
 </tr>
 </thead>
@@ -142,6 +143,7 @@
     <td>{{ result.p|round(2) }}&#176;</td>
     <td>{{ result.gamma|round(2) }}&#176;</td>
     <td>{{ result.tm|round(2) }}&#176;</td>
+    <td>{{ result.synanti|round(2) }}&#176;</td>
     <td>{{ result.mixed_results }}</td>
     </tr>
     {%- endfor %}
