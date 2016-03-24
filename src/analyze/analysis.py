@@ -41,15 +41,16 @@ class Analysis:
             logging.debug("Rejected %s", self.rejected[-1])
             return
         vectors = [ residue[name].get_vector() for name in self.atom_names ]
-
-        if residue.has_id("N9"):
+        print structure, pdb_structure
+        if residue.has_id("N9") and residue.has_id("C4"):
             v8 = residue["C4"].get_vector()
             v9 = residue["N9"].get_vector()
         elif residue.has_id("N1"):
             v8 = residue["N1"].get_vector()
             v9 = residue["C2"].get_vector()
         else:
-            raise Exception("N9 or N1 not found")
+            logging.debug("Rejected %s (no N9/C4 or N1)", structure)
+            return
 
         vs = []
 
