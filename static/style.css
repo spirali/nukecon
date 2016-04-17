@@ -148,7 +148,6 @@ clearfix:before,
 	margin: 10px;
 	padding: 10px 25px 10px 25px;
 	color: white;
-	float: right;
 }
 
 .button:hover {

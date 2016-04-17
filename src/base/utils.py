@@ -1,3 +1,5 @@
+import io
+import csv
 
 def group_by(lst, fn, sort_key=None, sort=False,
              only_values=False, base=None, as_dict=False):
@@ -47,3 +49,10 @@ def make_partitions(lst, size):
             paritition.append(lst[c[i - 1]:c[i]])
         result.append(paritition)
     return result
+
+
+def table_to_csv(table):
+    s = io.BytesIO()
+    csv.writer(s).writerows(table)
+    return s.getvalue()
+

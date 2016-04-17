@@ -345,6 +345,9 @@ class StructureList:
     def results(self):
         return itertools.chain.from_iterable(c.results for c in self.chains)
 
+    def make_table(self):
+        return []
+
     def __iter__(self):
         return iter(self.structures)
 

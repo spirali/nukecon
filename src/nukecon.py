@@ -1,7 +1,7 @@
-from server.results import get_results
-from base import paths
+from server.results import get_results, make_table
+from base import paths, utils
 
-from flask import Flask, render_template, abort, request
+from flask import Flask, render_template, abort, request, make_response
 from wtforms import Form, DecimalField, SelectField
 
 app = Flask("nukecon",
@@ -39,6 +39,13 @@ class ResultsForm(Form):
     join_angle = DecimalField('Merge angle (&#176;)', default=30)
 
 
+def csv_response(table):
+    output = make_response(utils.table_to_csv(table))
+    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+
 @app.route("/")
 def index():
     return render_template("index.html", components=COMPONENTS)
@@ -49,6 +56,8 @@ def results(component):
         abort(404)
     form = ResultsForm(request.form)
     if request.method == "POST" and form.validate():
+        if "Download as CSV" == request.form["submit"]:
+            return csv_response(make_table(component, form))
         results = get_results(component, form)
     else:
         results = {}
